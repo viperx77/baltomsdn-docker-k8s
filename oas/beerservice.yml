@@ -1,0 +1,70 @@
+openapi: '3.0.2'
+info:
+  title: Beer Service
+  version: '1.0'
+servers:
+  - url: https://localhost/v1
+paths:
+  /wall:
+    get:
+      summary: the number of beers on the wall
+      responses:
+        '200':
+          description: OK
+          content:
+              application/json:    
+                schema:
+                  $ref: "#/components/schemas/Wall"
+  /takedowns:
+    post:
+      summary: create a beer take down
+      responses:
+        '201':
+          description: beer taken off wall
+          content:
+              application/json:    
+                schema:
+                  $ref: "#/components/schemas/TakeDown"
+    get:
+      summary: returns all the takedowns
+      responses:
+        '200':
+          description: all beer takedowns
+          content:
+              application/json:    
+                schema:
+                  type: array
+                  items:                  
+                    $ref: "#/components/schemas/TakeDown"
+components:
+  schemas:
+    Wall:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int64
+        beers:
+          type: array
+          items: 
+            $ref: "#/components/schemas/Beer"
+    Beer:
+      type: object
+      properties:
+        name:
+          type: string
+        style:
+          type: string
+        abv:
+          type: number
+    TakeDown:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        count:
+          type: integer
+          format: int64
+        beer:
+          $ref: "#/components/schemas/Beer"
