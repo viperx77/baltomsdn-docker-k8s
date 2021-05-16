@@ -2,7 +2,7 @@
 set -e
 
 SERVER="my_database_server";
-PW="mysecretpassword";
+PW="changeme";
 DB="baltomsdn";
 
 echo "echo stop & remove old docker [$SERVER] and starting new fresh instance of [$SERVER]"

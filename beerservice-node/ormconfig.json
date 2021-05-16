@@ -3,15 +3,15 @@
   "host": "127.0.0.1",
   "port": 5432,
   "username": "postgres",
-  "password": "mysecretpassword",
-  "database": "baltomsdn",
+  "password": "changeme",
+  "database": "postgres",
   "entities": [
     "dist/**/*.entity{.ts,.js}"
   ],
   "synchronize": true,
   "migrationsTableName": "migration",
   "migrations": [
-    "src/migration/*.ts"
+    "dist/src/migration/*.ts"
   ],
   "cli": {
     "migrationsDir": "src/migration"

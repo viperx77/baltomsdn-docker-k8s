@@ -1,18 +1,15 @@
-kubectl create namespace baltomsdn
+# prep
+k delete namespace baltomsdn && k delete pv postgres-pv-volume
+docker volume rm $(docker volume ls -q )
+# start
+kubectl create namespace baltomsdn && k ns baltomsdn
 kubectl config set-context --current --namespace=baltomsdn
-  k ns baltomsdn
+
 k apply -f postgres.yaml
-k apply -f beerservice.yaml
+k apply -f beer-core.yaml
 
-k expose deployment/beerservice-deployment --type="NodePort" --port 3000
-k describe services/beerservice
+k get services
 
-export NODE_PORT=$(kubectl get services/beerservice -o go-template='{{(index .spec.ports 0).nodePort}}')
-echo NODE_PORT=$NODE_PORT
+export NODE_PORT=$(kubectl get services/beer-core -o go-template='{{(index .spec.ports 0).nodePort}}')
+curl localhost:$NODE_PORT/beer | jq
 
-
-kubectl delete service postgres 
-kubectl delete deployment postgres
-kubectl delete configmap postgres-config
-kubectl delete persistentvolumeclaim postgres-pv-claim
-kubectl delete persistentvolume postgres-pv-volume

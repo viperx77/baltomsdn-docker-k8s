@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beer-node-config
+  labels:
+    app: beernode
+data:
+  POSTGRES_HOST: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DATABASE: baltomsdn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beer-node
+  labels:
+    app: beer-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beer-node
+  template:
+    metadata:
+      labels:
+        app: beer-node
+    spec:
+      containers:
+        - name: beer-node
+          image: marklindell/baltomsdn:beer-node
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: beer-node-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beer-node
+  labels:
+    app: beer-node
+spec:
+  type: NodePort
+  ports:
+   - port: 3000
+  selector:
+   app: beer-node

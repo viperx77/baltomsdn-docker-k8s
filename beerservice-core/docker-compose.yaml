@@ -1,7 +1,6 @@
 version: '3.5'
 
 services:
-
   postgres:
     image: postgres
     environment:
@@ -11,7 +10,16 @@ services:
     volumes:
        - postgres:/data/postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
+    networks:
+      - postgres
+
+  beer:
+    image: beer-core
+    environment:
+        ConnectionStrings:DefaultConnection: User ID=postgres;Password=changeme;Server=postgres;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;
+    ports:
+      - 5000:5000
     networks:
       - postgres
 
@@ -27,15 +35,6 @@ services:
   #     - 5050:80
   #   networks:
   #     - postgres
-      
-  beerservice:
-    image: beer-node
-    environment:
-        POSTGRES_HOST: postgres
-    ports:
-      - 3000:3000
-    networks:
-      - postgres
 
 networks:
   postgres:

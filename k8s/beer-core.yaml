@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: beer-core-config
+  labels:
+    app: beernode
+data:
+  ConnectionStrings__DefaultConnection: 'User ID=postgres;Password=postgres;Server=postgres;Port=5432;Database=baltomsdn;Integrated Security=true;Pooling=true;'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: beer-core
+  labels:
+    app: beer-core
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: beer-core
+  template:
+    metadata:
+      labels:
+        app: beer-core
+    spec:
+      containers:
+        - name: beer-core
+          image: marklindell/baltomsdn:beer-core
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: beer-core-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: beer-core
+  labels:
+    app: beer-core
+spec:
+  type: NodePort
+  ports:
+   - port: 5000
+  selector:
+   app: beer-core
