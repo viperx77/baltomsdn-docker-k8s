@@ -2,7 +2,7 @@
 
 ## This demostration is using Docker Desktop version 20.10.5, build 55c4c88
 
-Start with Docker Desktop K8s turned off
+# Start with Docker Desktop K8s turned off
 
 To prep for demonstration run ```./clean.sh```
 
@@ -143,3 +143,113 @@ You can stop this container using the container id or a portion of it that is un
 # docker stop a66
 ```
 
+### Start a local database
+`./scripts.start-db.sh`
+
+### create the database using the ORM 
+`dotnet ef database update`
+
+### start the service
+`dotnet run`
+
+### call API
+`curl localhost:5000/beer | jq`
+
+## Review Dockerfile
+### Create a docker image
+`docker build . -t beer-core`
+### Show it cannot connect to the local database
+`docker run -p 5000:5000 beer-core`
+
+## Review docker-compose.yml
+
+### Start postgres, pgadmin and beer-node
+`docker-compose up`
+
+### Push to docker hub
+`docker tag beer-core marklindell/baltomsdn:beer-core`
+`docker push marklindell/baltomsdn:beer-core`
+
+### Show Docker images
+https://hub.docker.com/repository/registry-1.docker.io/marklindell/baltomsdn/tags?page=1&ordering=last_updated
+
+### Start a local database
+`./start-db.sh`
+
+### create the database using the ORM 
+`npm run migrate`
+
+### start the service
+`npm start`
+
+### Use swagger ui to create beer
+http://localhost:3000/api
+
+## Review Dockerfile
+### Create a docker image
+`docker build . -t beer-node`
+
+### Show it cannot connect to the local database
+`docker run beer-node`
+
+### Review docker-compose.yml
+
+### Start postgres, pgadmin and beer-node
+`docker-compose up`
+
+### Push to docker hub
+`docker tag beer-node marklindell/baltomsdn:beer-node`
+`docker push marklindell/baltomsdn:beer-node`
+
+### Show docker hub
+https://hub.docker.com/repository/registry-1.docker.io/marklindell/baltomsdn/tags?page=1&ordering=last_updated
+
+# Kubernetes
+
+## prep
+`k delete namespace baltomsdn && k delete pv postgres-pv-volume`
+`docker volume rm $(docker volume ls -q )`
+
+### create the namespace
+`kubectl create namespace baltomsdn`
+
+# you will type 'kubectl' alot! consider adding to your .bashrc
+`alias k=kubectl`
+# set the current context to the namespace
+`kubectl config set-context --current --namespace=baltomsdn`
+
+# faster way to set the namespace
+https://github.com/ahmetb/kubectx
+
+`k ns baltomsdn`
+
+## Review the poastgres.yaml
+
+### create a postgres instance
+`k apply -f postgres.yaml`
+
+### show the deployment
+`k get deployment`
+`k get pods`
+
+## Show Infra App
+https://infra.app/
+
+## review the beer-core.yaml
+### deploy beer core
+`k apply -f beer-core.yaml`
+
+### get the node port
+`export NODE_PORT=$(kubectl get services/beer-core -o go-template='{{(index .spec.ports 0).nodePort}}')`
+`curl localhost:$NODE_PORT/beer | jq`
+
+## Helm demonstraton
+
+### add repository and update
+`helm repo add cetic https://cetic.github.io/helm-charts`
+`helm repo update`
+
+### install postgres
+`helm install my-postgres cetic/postgresql`
+
+## Show in Infra App
