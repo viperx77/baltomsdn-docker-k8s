@@ -2,6 +2,7 @@
 
 ## This demostration is using Docker Desktop version 20.10.5, build 55c4c88
 
+[Presentation on google slides here](https://docs.google.com/presentation/d/1Ssd8NyXdNxCZLZHM3V7Bp8NEpSpq45yYJ6kmPEYuRrI/edit?usp=sharing)
 # Start with Docker Desktop K8s turned off
 
 To prep for demonstration run ```./clean.sh```
@@ -208,6 +209,7 @@ https://hub.docker.com/repository/registry-1.docker.io/marklindell/baltomsdn/tag
 
 ## prep
 `k delete namespace baltomsdn && k delete pv postgres-pv-volume`
+
 `docker volume rm $(docker volume ls -q )`
 
 ### create the namespace
@@ -230,6 +232,7 @@ https://github.com/ahmetb/kubectx
 
 ### show the deployment
 `k get deployment`
+
 `k get pods`
 
 ## Show Infra App
@@ -241,12 +244,14 @@ https://infra.app/
 
 ### get the node port
 `export NODE_PORT=$(kubectl get services/beer-core -o go-template='{{(index .spec.ports 0).nodePort}}')`
+
 `curl localhost:$NODE_PORT/beer | jq`
 
 ## Helm demonstraton
 
 ### add repository and update
 `helm repo add cetic https://cetic.github.io/helm-charts`
+
 `helm repo update`
 
 ### install postgres
